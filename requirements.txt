@@ -3,10 +3,11 @@
 # Updated: 2026-01-22
 
 # MCP SDK
-mcp>=1.0.0
+# Pinned below 2.0: the 2.x SDK removed the Server.list_tools() decorator API this server uses
+mcp>=1.0.0,<2
 
 # Async support
-asyncio-compat>=0.1.0
+# asyncio-compat>=0.1.0
 
 # Logging and utilities
 python-dotenv>=1.0.0

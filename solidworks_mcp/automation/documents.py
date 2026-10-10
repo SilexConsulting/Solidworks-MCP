@@ -29,7 +29,23 @@ class DocumentOperations:
     - self._result(): Result factory method
     - self._units: UnitConverter instance
     """
-    
+
+    # swUserPreferenceStringValue_e: swDefaultTemplatePart/Assembly/Drawing
+    _DEFAULT_TEMPLATE_PREFS = {"part": 8, "assembly": 9, "drawing": 10}
+
+    def _resolve_template(self, template_type: str) -> str:
+        """Find a template on disk, falling back to SolidWorks' default template setting"""
+        template = find_template(template_type)
+        if template:
+            return template
+        try:
+            template = self._sw_app.GetUserPreferenceStringValue(
+                self._DEFAULT_TEMPLATE_PREFS[template_type])
+        except Exception as e:
+            logger.warning(f"Could not read default {template_type} template: {e}")
+            template = ""
+        return template or ""
+
     def create_new_part(self) -> Dict:
         """
         Create a new part document
@@ -44,7 +60,7 @@ class DocumentOperations:
                     return r
             
             # Find part template
-            template = find_template("part")
+            template = self._resolve_template("part")
             if not template:
                 template = ""  # Let SolidWorks use default
                 logger.info("Using SolidWorks default part template")
@@ -88,7 +104,7 @@ class DocumentOperations:
                 if not r["success"]:
                     return r
             
-            template = find_template("assembly")
+            template = self._resolve_template("assembly")
             if not template:
                 template = ""
             
@@ -130,7 +146,7 @@ class DocumentOperations:
                 if not r["success"]:
                     return r
             
-            template = find_template("drawing")
+            template = self._resolve_template("drawing")
             if not template:
                 template = ""
             

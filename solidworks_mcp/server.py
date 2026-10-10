@@ -21,6 +21,7 @@ import sys
 import json
 import logging
 import traceback
+import types
 from typing import Dict
 from pathlib import Path
 
@@ -687,7 +688,10 @@ def _list_features_fixed() -> Dict:
                         feat_type = "<unknown>"
                 
                 try:
-                    suppressed = feat.IsSuppressed()
+                    # Late-bound COM exposes IsSuppressed as a property
+                    suppressed = feat.IsSuppressed
+                    if isinstance(suppressed, types.MethodType):
+                        suppressed = suppressed()
                 except:
                     suppressed = False
                 
@@ -706,8 +710,10 @@ def _list_features_fixed() -> Dict:
             
             # FIXED: GetNextFeature is a property in SW 2025 COM
             try:
+                # COM dispatch objects are always callable(), so only call
+                # when we got back a bound method rather than the next feature
                 feat = feat.GetNextFeature
-                if callable(feat):
+                if isinstance(feat, types.MethodType):
                     feat = feat()
             except:
                 break
