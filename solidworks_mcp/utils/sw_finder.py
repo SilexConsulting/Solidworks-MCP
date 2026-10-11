@@ -55,6 +55,7 @@ class SolidWorksFinder:
     
     # ProgramData template paths
     PROGRAMDATA_TEMPLATE_PATHS = [
+        r"C:\ProgramData\SolidWorks\SOLIDWORKS 2026\templates",
         r"C:\ProgramData\SolidWorks\SOLIDWORKS 2025\templates",
         r"C:\ProgramData\SolidWorks\SOLIDWORKS 2024\templates",
         r"C:\ProgramData\SolidWorks\SOLIDWORKS 2023\templates",
